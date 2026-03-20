@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오은아 | PM</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f0f1a;
+      font-family: 'Noto Sans KR', sans-serif;
+      overflow: hidden;
+    }
+
+    /* 배경 파티클 */
+    .bg-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.15;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.2; }
+      90%  { opacity: 0.2; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* 카드 */
+    .card-wrap {
+      position: relative;
+      z-index: 1;
+      perspective: 1200px;
+    }
+
+    .card {
+      width: 380px;
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border-radius: 28px;
+      padding: 40px 36px 36px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 30px 80px rgba(0,0,0,0.6),
+        0 0 60px rgba(99,102,241,0.15);
+      transition: transform 0.15s ease;
+      transform-style: preserve-3d;
+    }
+
+    /* 상단 뱃지 */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99,102,241,0.2);
+      border: 1px solid rgba(99,102,241,0.4);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      color: #a5b4fc;
+      letter-spacing: 0.05em;
+      margin-bottom: 28px;
+    }
+    .badge .dot {
+      width: 6px; height: 6px;
+      background: #6366f1;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* 캐릭터 영역 */
+    .avatar-section {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .avatar {
+      flex-shrink: 0;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 0 30px rgba(99,102,241,0.4);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .name-block { flex: 1; }
+    .name {
+      font-size: 30px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .title {
+      font-size: 12px;
+      font-weight: 400;
+      color: #6366f1;
+      background: rgba(99,102,241,0.15);
+      border-radius: 6px;
+      padding: 4px 10px;
+      display: inline-block;
+    }
+
+    /* 한 줄 소개 */
+    .tagline {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.7;
+      border-left: 3px solid #6366f1;
+      padding-left: 14px;
+      margin-bottom: 28px;
+    }
+    .tagline strong { color: #e2e8f0; }
+
+    /* 구분선 */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent);
+      margin-bottom: 24px;
+    }
+
+    /* 연락처 */
+    .contacts { display: flex; flex-direction: column; gap: 12px; }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: background 0.2s, transform 0.2s;
+      text-decoration: none;
+    }
+    .contact-item:hover {
+      background: rgba(99,102,241,0.12);
+      transform: translateX(4px);
+    }
+
+    .contact-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+    .icon-email { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .icon-phone { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+
+    .contact-info { display: flex; flex-direction: column; }
+    .contact-label { font-size: 10px; color: #64748b; margin-bottom: 2px; letter-spacing: 0.08em; }
+    .contact-value { font-size: 13px; color: #e2e8f0; font-weight: 500; }
+
+    /* 스킬 태그 */
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .skill-tag {
+      font-size: 11px;
+      color: #a5b4fc;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 6px;
+      padding: 4px 10px;
+      transition: all 0.2s;
+      cursor: default;
+    }
+    .skill-tag:hover {
+      background: rgba(99,102,241,0.25);
+      border-color: rgba(99,102,241,0.6);
+      color: #c7d2fe;
+    }
+
+    /* 복사 토스트 */
+    .toast {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e293b;
+      border: 1px solid rgba(99,102,241,0.4);
+      color: #a5b4fc;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- 배경 파티클 -->
+<div class="bg-particles" id="particles"></div>
+
+<!-- 카드 -->
+<div class="card-wrap">
+  <div class="card" id="card">
+
+    <div class="badge"><span class="dot"></span> AVAILABLE FOR PROJECTS</div>
+
+    <div class="avatar-section">
+      <!-- SVG 캐릭터 -->
+      <div class="avatar">
+        <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" width="110" height="110">
+          <defs>
+            <radialGradient id="bgGrad" cx="50%" cy="50%" r="55%">
+              <stop offset="0%" stop-color="#a78bfa"/>
+              <stop offset="100%" stop-color="#4338ca"/>
+            </radialGradient>
+          </defs>
+
+          <!-- 배경 -->
+          <circle cx="55" cy="55" r="55" fill="url(#bgGrad)"/>
+
+          <!-- 별 장식 -->
+          <circle cx="20" cy="22" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="88" cy="18" r="1" fill="white" opacity="0.5"/>
+          <circle cx="92" cy="40" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="15" cy="70" r="1" fill="white" opacity="0.5"/>
+
+          <!-- 꼬리 -->
+          <path d="M72 88 Q90 78 88 62 Q86 52 80 58 Q85 65 82 74 Q78 82 68 84Z" fill="#fde68a"/>
+          <path d="M72 88 Q90 78 88 62 Q86 52 80 58 Q85 65 82 74 Q78 82 68 84Z" fill="#fbbf24" opacity="0.4"/>
+
+          <!-- 몸 -->
+          <ellipse cx="55" cy="88" rx="24" ry="18" fill="#fde68a"/>
+
+          <!-- 앞발 (왼) -->
+          <ellipse cx="36" cy="100" rx="9" ry="7" fill="#fde68a"/>
+          <ellipse cx="36" cy="103" rx="7" ry="4" fill="#fbbf24" opacity="0.3"/>
+          <!-- 발가락 -->
+          <ellipse cx="31" cy="103" rx="2.5" ry="2" fill="#fbbf24" opacity="0.5"/>
+          <ellipse cx="36" cy="105" rx="2.5" ry="2" fill="#fbbf24" opacity="0.5"/>
+          <ellipse cx="41" cy="103" rx="2.5" ry="2" fill="#fbbf24" opacity="0.5"/>
+
+          <!-- 앞발 (오른) -->
+          <ellipse cx="74" cy="100" rx="9" ry="7" fill="#fde68a"/>
+          <ellipse cx="74" cy="103" rx="7" ry="4" fill="#fbbf24" opacity="0.3"/>
+          <ellipse cx="69" cy="103" rx="2.5" ry="2" fill="#fbbf24" opacity="0.5"/>
+          <ellipse cx="74" cy="105" rx="2.5" ry="2" fill="#fbbf24" opacity="0.5"/>
+          <ellipse cx="79" cy="103" rx="2.5" ry="2" fill="#fbbf24" opacity="0.5"/>
+
+          <!-- 배 (밝은 부분) -->
+          <ellipse cx="55" cy="90" rx="15" ry="12" fill="#fff9e6"/>
+
+          <!-- 머리 -->
+          <ellipse cx="55" cy="55" rx="26" ry="25" fill="#fde68a"/>
+
+          <!-- 귀 (고양이) -->
+          <polygon points="30,35 22,14 42,28" fill="#fde68a"/>
+          <polygon points="33,33 27,18 41,28" fill="#f9a8d4" opacity="0.8"/>
+          <polygon points="80,35 88,14 68,28" fill="#fde68a"/>
+          <polygon points="77,33 83,18 69,28" fill="#f9a8d4" opacity="0.8"/>
+
+          <!-- 눈 (크고 반짝이는) -->
+          <ellipse cx="44" cy="54" rx="7" ry="7.5" fill="white"/>
+          <ellipse cx="66" cy="54" rx="7" ry="7.5" fill="white"/>
+          <!-- 눈동자 -->
+          <circle cx="44" cy="55" r="5" fill="#1e1b4b"/>
+          <circle cx="66" cy="55" r="5" fill="#1e1b4b"/>
+          <!-- 홍채 색 -->
+          <circle cx="44" cy="55" r="3.5" fill="#4c1d95"/>
+          <circle cx="66" cy="55" r="3.5" fill="#4c1d95"/>
+          <!-- 하이라이트 큰 것 -->
+          <circle cx="46" cy="52" r="2.2" fill="white"/>
+          <circle cx="68" cy="52" r="2.2" fill="white"/>
+          <!-- 하이라이트 작은 것 -->
+          <circle cx="42" cy="57" r="1" fill="white" opacity="0.7"/>
+          <circle cx="64" cy="57" r="1" fill="white" opacity="0.7"/>
+
+          <!-- 눈 테두리 (부드럽게) -->
+          <ellipse cx="44" cy="54" rx="7" ry="7.5" fill="none" stroke="#fbbf24" stroke-width="1"/>
+          <ellipse cx="66" cy="54" rx="7" ry="7.5" fill="none" stroke="#fbbf24" stroke-width="1"/>
+
+          <!-- 코 -->
+          <ellipse cx="55" cy="63" rx="3" ry="2" fill="#f9a8d4"/>
+          <path d="M53 63 Q55 61.5 57 63" fill="#f472b6" opacity="0.6"/>
+
+          <!-- 입 -->
+          <path d="M51 66 Q55 70 59 66" stroke="#f472b6" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M55 65 L55 66" stroke="#f472b6" stroke-width="1.5" stroke-linecap="round"/>
+
+          <!-- 수염 -->
+          <path d="M34 63 L47 64" stroke="#d97706" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+          <path d="M33 67 L47 66" stroke="#d97706" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+          <path d="M76 63 L63 64" stroke="#d97706" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+          <path d="M77 67 L63 66" stroke="#d97706" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
+
+          <!-- 볼 블러셔 -->
+          <ellipse cx="36" cy="62" rx="8" ry="5" fill="#fda4af" opacity="0.45"/>
+          <ellipse cx="74" cy="62" rx="8" ry="5" fill="#fda4af" opacity="0.45"/>
+
+          <!-- 머리 위 작은 리본 -->
+          <polygon points="55,24 50,18 54,24" fill="#f472b6"/>
+          <polygon points="55,24 60,18 56,24" fill="#f472b6"/>
+          <circle cx="55" cy="23" r="3" fill="#fb7185"/>
+        </svg>
+      </div>
+
+      <div class="name-block">
+        <div class="name">오은아</div>
+        <div class="title">바이브 코딩 가능한 PM</div>
+      </div>
+    </div>
+
+    <div class="tagline">
+      <strong>코드도 읽고, 사람도 읽는</strong> PM.<br/>
+      기획부터 프로토타입까지, 직접 만들며 소통합니다.
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="contacts">
+      <a class="contact-item" href="mailto:oea1001@gmail.com" onclick="copyText('oea1001@gmail.com', event)">
+        <div class="contact-icon icon-email">✉️</div>
+        <div class="contact-info">
+          <span class="contact-label">EMAIL</span>
+          <span class="contact-value">oea1001@gmail.com</span>
+        </div>
+      </a>
+      <a class="contact-item" href="tel:01040408921" onclick="copyText('010-4040-8921', event)">
+        <div class="contact-icon icon-phone">📱</div>
+        <div class="contact-info">
+          <span class="contact-label">PHONE</span>
+          <span class="contact-value">010-4040-8921</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="skills">
+      <span class="skill-tag">Product Management</span>
+      <span class="skill-tag">Vibe Coding</span>
+      <span class="skill-tag">Prototyping</span>
+      <span class="skill-tag">User Research</span>
+      <span class="skill-tag">HTML/CSS</span>
+      <span class="skill-tag">AI Tools</span>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // 파티클 생성
+  const container = document.getElementById('particles');
+  const colors = ['#6366f1','#8b5cf6','#a78bfa','#60a5fa','#34d399'];
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 6 + 2;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*12+8}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    container.appendChild(p);
+  }
+
+  // 3D 틸트 효과
+  const card = document.getElementById('card');
+  const wrap = document.querySelector('.card-wrap');
+
+  wrap.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top  + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width  / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+    card.style.transform = `rotateY(${dx*10}deg) rotateX(${-dy*8}deg)`;
+  });
+
+  wrap.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+
+  // 클립보드 복사 + 토스트
+  function copyText(text, e) {
+    e.preventDefault();
+    navigator.clipboard.writeText(text).then(() => showToast(`"${text}" 복사됨!`));
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>
